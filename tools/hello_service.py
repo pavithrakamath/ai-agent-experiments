@@ -5,8 +5,10 @@ from typing import Any, Coroutine
 import mcp
 from mcp import stdio_server
 from mcp.server import Server
-from mcp.types import TextContent
+from mcp.types import TextContent, Tool
 
+
+### IN this case, we have built a stdio MCP server using the mcp library and not FASTMCP
 
 class HelloService:
 
@@ -21,7 +23,7 @@ class HelloService:
             return [TextContent(text=f"Hello, {user_input}!", type="text")]
 
         @self.server.list_tools()
-        async def list_tools() -> list[mcp.Tool]:
+        async def list_tools() -> list[Tool]:
             return [mcp.Tool(name="say_hello", description="Say hello to someone",
                              inputSchema={
                                  "type": "object",
@@ -40,11 +42,11 @@ class HelloService:
             await self.server.run(read_stream, write_stream, self.server.create_initialization_options())
 
 
-async def main() -> None:
-    service = HelloService()
-    await service.run()
-    print("Server stopped.")
 
 
 if __name__ == "__main__":
+    async def main() -> None:
+        service = HelloService()
+        await service.run()
+        print("Server stopped.")
     asyncio.run(main())
