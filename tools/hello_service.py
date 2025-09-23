@@ -1,6 +1,4 @@
 import asyncio
-from asyncio import run
-from typing import Any, Coroutine
 
 import mcp
 from mcp import stdio_server
@@ -17,9 +15,9 @@ class HelloService:
 
         @self.server.call_tool()
         async def say_hello(name: str, arguments: dict[str, str]) -> list[TextContent]:
-            user_input=arguments["username"]
-            if user_input== "":
-                user_input= "world"
+            user_input = arguments["username"]
+            if user_input == "":
+                user_input = "world"
             return [TextContent(text=f"Hello, {user_input}!", type="text")]
 
         @self.server.list_tools()
@@ -42,11 +40,11 @@ class HelloService:
             await self.server.run(read_stream, write_stream, self.server.create_initialization_options())
 
 
-
-
 if __name__ == "__main__":
     async def main() -> None:
         service = HelloService()
         await service.run()
         print("Server stopped.")
+
+
     asyncio.run(main())

@@ -3,40 +3,41 @@ import json
 import os
 from typing import List
 
-from openai import AsyncAzureOpenAI
 from dotenv import load_dotenv
+from openai import AsyncAzureOpenAI
 from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionAssistantMessageParam, \
     ChatCompletionUserMessageParam, ChatCompletionMessageParam, ChatCompletionToolMessageParam
 
 from ai_agent_experiments.mcp_stdio_client import McpStdioClient
 
+
 class ChatBot:
     def __init__(self):
         load_dotenv()
         self.client = AsyncAzureOpenAI(api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                                         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                                         api_version=os.getenv("AZURE_OPENAI_API_VERSION"))
+                                       azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
+                                       api_version=os.getenv("AZURE_OPENAI_API_VERSION"))
         self.model = os.getenv("AZURE_OPENAI_DEPLOYMENT")
         self.system_message = "You are a helpful assistant. Your name is Bot. Be Polite in your answers. The way to exit any conversation with you is to type `exit`."
         self.messages: List[ChatCompletionMessageParam] = [
             ChatCompletionSystemMessageParam(content=self.system_message, role="system")]
 
-        self.mcp_client = McpStdioClient("greeter-server", "python", [ "/Users/pk/work/ai-agent-experiments/tools/research-mcp-server.py"])
-
-
+        self.mcp_client = McpStdioClient("greeter-server", "python",
+                                         ["/Users/pk/work/ai-agent-experiments/tools/research-mcp-server.py"])
 
     async def run(self, query) -> str:
         self.messages.append(ChatCompletionUserMessageParam(content=query, role="user"))
         response = await  self.client.chat.completions.create(
             model=self.model,
             messages=self.messages,
-            tools=self.mcp_client.available_tools if self.mcp_client.available_tools else None,
+            tools=await self.mcp_client.get_available_tools(),
         )
         continues = True
         while continues:
             message = response.choices[0].message
             if message.tool_calls:
-                self.messages.append(ChatCompletionAssistantMessageParam(role="assistant",content=message.content, tool_calls=message.tool_calls))
+                self.messages.append(ChatCompletionAssistantMessageParam(role="assistant", content=message.content,
+                                                                         tool_calls=message.tool_calls))
 
                 for tool_call in message.tool_calls:
                     tool_name = tool_call.function.name
@@ -46,18 +47,20 @@ class ChatBot:
 
                     result = await self.mcp_client.use_tool(tool_name, tool_args)
                     # McpStdioClient returns a normalized string; append directly as tool message
-                    self.messages.append(ChatCompletionToolMessageParam(role="tool", content=result, tool_call_id=tool_call.id))
+                    self.messages.append(
+                        ChatCompletionToolMessageParam(role="tool", content=result, tool_call_id=tool_call.id))
 
                 response = await self.client.chat.completions.create(
-                        model=self.model,
-                        messages=self.messages,
-                        tools=self.mcp_client.available_tools if self.mcp_client.available_tools else None,
+                    model=self.model,
+                    messages=self.messages,
+                    tools=self.mcp_client._tools if self.mcp_client._tools else None,
                 )
             else:
                 continues = False
         # Return the final assistant message content
         final_message = response.choices[0].message
         return final_message.content or ""
+
 
 async def main() -> None:
     agent = ChatBot()
@@ -84,6 +87,7 @@ async def main() -> None:
     finally:
         # Ensure we always disconnect the MCP client to avoid hanging subprocesses
         await agent.mcp_client.disconnect()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -2,12 +2,16 @@
 
 ## Overview
 
-This is an experimental project designed for beginners who want to explore the realm of AI. It provides simple, hands-on examples of building intelligent agents using popular APIs and libraries.
+This is an experimental project designed for beginners who want to explore the realm of AI. It provides simple, hands-on
+examples of building intelligent agents using popular APIs and libraries.
 
-- **ChatBot**: A basic AI-powered assistant that answers user queries using Azure OpenAI, with a focus on politeness and helpfulness.
-- **ResearchAgent**: Demonstrates how to combine web search (DuckDuckGo) with Azure OpenAI to analyze and summarize search results for any query.
+- **ChatBot**: A basic AI-powered assistant that answers user queries using Azure OpenAI, with a focus on politeness and
+  helpfulness.
+- **ResearchAgent**: Demonstrates how to combine web search (DuckDuckGo) with Azure OpenAI to analyze and summarize
+  search results for any query.
 
 ## Features
+
 - Easy-to-understand conversational AI
 - Web search integration and result analysis
 - Simple configuration via environment variables
@@ -35,16 +39,20 @@ This is an experimental project designed for beginners who want to explore the r
 ## Usage
 
 ### ChatBot Example
+
 ```python
 from ai_agent_experiments.chat_bot import ChatBot
+
 bot = ChatBot()
 response = bot.run("Hello, who are you?")
 print(response)
 ```
 
 ### ResearchAgent Example
+
 ```python
 from ai_agent_experiments.research_agent import ResearchAgent, search
+
 agent = ResearchAgent()
 results = search("What is AI?")
 summary = agent.analyze(results, "What is AI?")

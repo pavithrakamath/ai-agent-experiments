@@ -1,10 +1,9 @@
-import asyncio
 from contextlib import AsyncExitStack
 from typing import Any, List
 
-from mcp import ClientSession, StdioServerParameters, stdio_client
-from mcp.types import CallToolResult
-from openai.types.chat import ChatCompletionFunctionToolParam
+from mcp import ClientSession, StdioServerParameters, stdio_client, ListToolsResult
+from openai.types import FunctionDefinition
+from openai.types.chat import ChatCompletionFunctionTool
 
 
 class McpStdioClient:
@@ -18,13 +17,13 @@ class McpStdioClient:
         """
         Initializes the MCP client with server connection parameters.
         """
-        self.available_tools: List[Any] = []
+        self._tools: List[ChatCompletionFunctionTool] = []
         self.name = name
         self.command = command
         self.server_args = server_args
         self.env_vars = env_vars
 
-        self._session: ClientSession = None
+        self._session: ClientSession |None=None
         self._connected: bool = False
         self._exit_stack: AsyncExitStack = AsyncExitStack()
 
@@ -57,33 +56,26 @@ class McpStdioClient:
                     ClientSession(read_stream=read, write_stream=write))
 
                 await self._session.initialize()
-                response = await self._session.list_tools()
+                response:ListToolsResult = await self._session.list_tools()
                 tools = response.tools
                 print(f"Connected to server {self.name} with tools:", {t.name for t in tools})
                 for tool in tools:
                     # Convert MCP tool to OpenAI tool format
-                    openai_tool = {
-                        "type": "function",
-                        "function": {
-                            "name": tool.name,
-                            "description": tool.description,
-                            "parameters": tool.inputSchema,
-                        },
-                    }
-                    self.available_tools.append(openai_tool)
+                    function= FunctionDefinition(name=tool.name, description=tool.description, parameters=tool.inputSchema)
+                    openai_tool = ChatCompletionFunctionTool(type="function", function=function)
+                    self._tools.append(openai_tool)
                 self._connected = True
             except Exception as e:
                 raise ConnectionError(f"Failed to connect to server: {str(e)}")
 
-    async  def get_available_tools(self) -> List[Any]:
+    async def get_available_tools(self) -> List[Any]:
         """
         Retrieves the cached list of available tools from the connected MCP server.
 
         Returns:
             list: List of available tool names and their descriptions
         """
-        return self.available_tools
-
+        return self._tools
 
     async def use_tool(self, tool_name: str, tool_args: dict) -> str:
         """
