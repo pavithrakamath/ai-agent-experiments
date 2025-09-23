@@ -1,4 +1,3 @@
-import asyncio
 import json
 import os
 from typing import List
@@ -22,8 +21,8 @@ class ChatBot:
         self.messages: List[ChatCompletionMessageParam] = [
             ChatCompletionSystemMessageParam(content=self.system_message, role="system")]
 
-        self.mcp_client = McpStdioClient("greeter-server", "python",
-                                         ["/Users/pk/work/ai-agent-experiments/tools/research-mcp-server.py"])
+        self.mcp_client = McpStdioClient("research-server", "poetry",
+                                         ["run", "python", "-m", "tools.research_server"])
 
     async def run(self, query) -> str:
         self.messages.append(ChatCompletionUserMessageParam(content=query, role="user"))
@@ -61,33 +60,3 @@ class ChatBot:
         final_message = response.choices[0].message
         return final_message.content or ""
 
-
-async def main() -> None:
-    agent = ChatBot()
-    try:
-        await agent.mcp_client.connect()
-        prompt = "\033[95mI am Bot! I am here to chat with you! When you have had enough of me just type in `exit`. so what's on your mind?\n>>"
-        while True:
-            try:
-                user_input = await asyncio.to_thread(input, prompt)
-            except EOFError:
-                # Treat EOF (e.g., Ctrl+D) as an exit signal
-                print("Exiting...")
-                break
-
-            if user_input == "exit":
-                print("Exiting...")
-                break
-            else:
-                result = await agent.run(user_input)
-                print(f"\033[95mBot:: {result}")
-                prompt = "\033[92mWhat next >>"
-    except KeyboardInterrupt:
-        print("Interrupted. Shutting down...")
-    finally:
-        # Ensure we always disconnect the MCP client to avoid hanging subprocesses
-        await agent.mcp_client.disconnect()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
