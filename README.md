@@ -62,3 +62,10 @@ print(summary)
 ## License
 
 MIT
+
+## References
+
+. [deep learning course on rich apps with mcp](https://learn.deeplearning.ai/courses/mcp-build-rich-context-ai-apps-with-anthropic)
+
+. [AI Agents with MCP](https://learning.oreilly.com/library/view/ai-agents-with/9798341639546/)
+
