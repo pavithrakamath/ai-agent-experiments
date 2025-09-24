@@ -77,6 +77,13 @@ class Configuration:
             "api_version" : str.strip(str(os.getenv("AZURE_OPENAI_API_VERSION","" ))),
             "model": str.strip(str(os.getenv("AZURE_OPENAI_DEPLOYMENT","")))
         }
+        self.faiss_server_config = {
+            "path": str.strip(str(os.getenv("FAISS_EMBEDDINGS_SAVE_PATH", ""))),
+            "dimension": os.getenv("FAISS_EMBEDDINGS_DIMENSION", 1536),
+            "chunk_size": os.getenv("FAISS_CHUNK_SIZE", 1000),
+            "chunk_overlap": os.getenv("FAISS_CHUNK_OVERLAP", 100),
+            "embedding_metric": os.getenv("FAISS_EMBEDDING_METRIC", "cosine"),
+        }
 
 
 
