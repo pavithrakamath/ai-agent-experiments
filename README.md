@@ -69,3 +69,7 @@ MIT
 
 . [AI Agents with MCP](https://learning.oreilly.com/library/view/ai-agents-with/9798341639546/)
 
+. [RAG] (https://youtu.be/bmduzd1oY7U)
+
+. [Embedding models] (https://platform.openai.com/docs/guides/embeddings)
+
