@@ -20,9 +20,9 @@ class MCPStreamableClient:
         else:
             server_connection = await self._exit_stack.enter_async_context(
                 streamablehttp_client(self.server_url, headers))
-            self.read, self.write, self._get_session_id = server_connection
+            read, write, self._get_session_id = server_connection
             self._session = await self._exit_stack.enter_async_context(
-                ClientSession(read_stream=self.read, write_stream=self.write))
+                ClientSession(read_stream=read, write_stream=write))
             await self._session.initialize()
             self._connected = True
 

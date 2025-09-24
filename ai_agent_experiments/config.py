@@ -1,6 +1,9 @@
 import json
+import os
 from dataclasses import dataclass, field
 from typing import Optional, Union
+
+from dotenv import load_dotenv
 
 
 @dataclass
@@ -22,7 +25,7 @@ class StdioMCPConfig:
 
 @dataclass
 class StreamableMCPConfig:
-    """Configuration for a MCP server using the SSE transport."""
+    """Configuration for an MCP server using the SSE transport."""
     url: str
     """The URL of the SSE server."""
     headers: dict[str, str] | None = None
@@ -47,7 +50,7 @@ def _load_config(path) -> dict[str, Union[StdioMCPConfig, StreamableMCPConfig]]:
                 except (TypeError, ValueError) as e:
                     print(f"Error loading configuration from {path}: {e}")
                     return {}
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             print(f"Error parsing MCP configuration named {path}")
             return {}
 
@@ -64,13 +67,22 @@ def _create_mcp_config(server: dict) -> StdioMCPConfig | StreamableMCPConfig | N
         return None
 
 
-class MCPConfig:
+class Configuration:
     def __init__(self, path: str):
-        self._config = _load_config(path)
+        load_dotenv()
+        self._mcp_config = _load_config(path)
+        self.client_config = {
+            "api_key":  str.strip(str(os.getenv("AZURE_OPENAI_API_KEY", ""))),
+            "azure_endpoint": str.strip(str(os.getenv("AZURE_OPENAI_ENDPOINT", ""))),
+            "api_version" : str.strip(str(os.getenv("AZURE_OPENAI_API_VERSION","" ))),
+            "model": str.strip(str(os.getenv("AZURE_OPENAI_DEPLOYMENT","")))
+        }
+
+
 
     def get_config(self, server_name: str) -> StdioMCPConfig | StreamableMCPConfig:
-        return self._config[server_name]
+        return self._mcp_config[server_name]
 
 
 if __name__ == "__main__":
-    config = MCPConfig("../config.json")
+    config = Configuration("../config.json")

@@ -1,22 +1,21 @@
 import json
-import os
 from typing import List
 
-from dotenv import load_dotenv
 from openai import AsyncAzureOpenAI
 from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionAssistantMessageParam, \
     ChatCompletionUserMessageParam, ChatCompletionMessageParam, ChatCompletionToolMessageParam
 
+from ai_agent_experiments.config import Configuration
 from ai_agent_experiments.mcp_stdio_client import McpStdioClient
 
 
 class ChatBot:
-    def __init__(self):
-        load_dotenv()
-        self.client = AsyncAzureOpenAI(api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                                       azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                                       api_version=os.getenv("AZURE_OPENAI_API_VERSION"))
-        self.model = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+    def __init__(self, config: Configuration):
+
+        self.client = AsyncAzureOpenAI(api_key=config.client_config["api_key"],
+                                       azure_endpoint=config.client_config["azure_endpoint"],
+                                       api_version=config.client_config["api_version"])
+        self.model = config.client_config["model"]
         self.system_message = "You are a helpful assistant. Your name is Bot. Be Polite in your answers. The way to exit any conversation with you is to type `exit`."
         self.messages: List[ChatCompletionMessageParam] = [
             ChatCompletionSystemMessageParam(content=self.system_message, role="system")]
@@ -45,18 +44,17 @@ class ChatBot:
                     print(f"Calling tool {tool_name} with args {tool_args}")
 
                     result = await self.mcp_client.use_tool(tool_name, tool_args)
-                    # McpStdioClient returns a normalized string; append directly as tool message
+                    # McpStdioClient returns a normalized string; append directly as a tool message
                     self.messages.append(
                         ChatCompletionToolMessageParam(role="tool", content=result, tool_call_id=tool_call.id))
 
                 response = await self.client.chat.completions.create(
                     model=self.model,
                     messages=self.messages,
-                    tools=self.mcp_client._tools if self.mcp_client._tools else None,
+                    tools=await self.mcp_client.get_available_tools()
                 )
             else:
                 continues = False
         # Return the final assistant message content
         final_message = response.choices[0].message
         return final_message.content or ""
-

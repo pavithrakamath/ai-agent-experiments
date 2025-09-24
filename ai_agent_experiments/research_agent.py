@@ -1,10 +1,10 @@
 import html
-import os
 
-import openai
 import requests
-from dotenv import load_dotenv
+from openai import AzureOpenAI
 from openai.types.chat import ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam
+
+from ai_agent_experiments.config import Configuration
 
 
 def search(user_query: str) -> dict[str, str]:
@@ -19,13 +19,11 @@ def search(user_query: str) -> dict[str, str]:
 
 
 class ResearchAgent:
-    def __init__(self):
-        load_dotenv()
-        client = openai.AzureOpenAI(api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-                                    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-                                    api_version=os.getenv("AZURE_OPENAI_API_VERSION"))
-        self.model = os.getenv("AZURE_OPENAI_DEPLOYMENT")
-        self.client = client
+    def __init__(self, config:Configuration):
+        self.client = AzureOpenAI(api_key=config.client_config["api_key"],
+                                       azure_endpoint=config.client_config["azure_endpoint"],
+                                       api_version=config.client_config["api_version"])
+        self.model = config.client_config["model"]
 
     def analyze(self, search_result, original_query) -> str:
         response = self.client.chat.completions.create(
@@ -48,13 +46,13 @@ class ResearchAgent:
         # Step 2: Agent reasons about the external data
         print("Agent: Now I'll analyze what I found...")
         analysis = self.analyze(search_results, query)
-        "hello".startswith()
         # Step 3: Return the final answer
         return analysis
 
 
 if __name__ == "__main__":
-    agent = ResearchAgent()
+    configuration = Configuration("../config.json")
+    agent = ResearchAgent(configuration)
     user_input = "What are the latest trends in AI research?"
     result = agent.run(user_input)
     print(result)

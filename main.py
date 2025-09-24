@@ -1,10 +1,12 @@
 import asyncio
 
 from ai_agent_experiments.chat_bot import ChatBot
+from ai_agent_experiments.config import Configuration
 
 
 async def main() -> None:
-    agent = ChatBot()
+    config = Configuration("./config.json")
+    agent = ChatBot(config)
     try:
         await agent.mcp_client.connect()
         prompt = "\033[95mI am Bot! I am here to chat with you! When you have had enough of me just type in `exit`. so what's on your mind?\n>>"
