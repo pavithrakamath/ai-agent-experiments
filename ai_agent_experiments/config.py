@@ -75,7 +75,9 @@ class Configuration:
             "api_key":  str.strip(str(os.getenv("AZURE_OPENAI_API_KEY", ""))),
             "azure_endpoint": str.strip(str(os.getenv("AZURE_OPENAI_ENDPOINT", ""))),
             "api_version" : str.strip(str(os.getenv("AZURE_OPENAI_API_VERSION","" ))),
-            "model": str.strip(str(os.getenv("AZURE_OPENAI_DEPLOYMENT","")))
+            "model": str.strip(str(os.getenv("AZURE_OPENAI_DEPLOYMENT",""))),
+            "inference_endpoint": str.strip(str(os.getenv("AZURE_INFERENCE_ENDPOINT", ""))),
+
         }
         self.faiss_server_config = {
             "path": str.strip(str(os.getenv("FAISS_EMBEDDINGS_SAVE_PATH", ""))),
