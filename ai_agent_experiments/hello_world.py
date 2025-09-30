@@ -23,6 +23,6 @@ if __name__ == "__main__":
     prompt_template = PromptTemplate(input_variables=["information"], template=system_template)
 
     # Below is the LangChain chain in Langchain Expression Language. runnable interface -> call invoke method of each member of the chain
-    # Chain is developer defined control flow unlike an agent where the next step is determined by LLM
+    # `Chain` is a developer-defined control flow unlike an agent where LLM determines the next step
     chain = prompt_template | model | StrOutputParser()
     print(chain.invoke({"information": ada_info}))
