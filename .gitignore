@@ -9,4 +9,4 @@
 /papers
 /faiss_index/
 /resources/
-/__pycache__/
+**/*/__pycache__/
