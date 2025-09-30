@@ -1,7 +1,7 @@
 import asyncio
 
-from ai_agent_experiments.chat_bot import ChatBot
 from ai_agent_experiments.config import Configuration
+from ai_agent_experiments.lesson_04_tool_calling_mcp import ChatBot
 
 
 async def main() -> None:

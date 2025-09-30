@@ -24,6 +24,7 @@ class ChatBot:
                                          ["run", "python", "-m", "tools.research_server"])
 
     async def run(self, query) -> str:
+        # TODO: Add input validation and error handling for production use
         self.messages.append(ChatCompletionUserMessageParam(content=query, role="user"))
         response = await  self.client.chat.completions.create(
             model=self.model,

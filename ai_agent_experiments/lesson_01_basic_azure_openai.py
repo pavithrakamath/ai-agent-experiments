@@ -8,6 +8,7 @@ from ai_agent_experiments.config import Configuration
 
 
 def search(user_query: str) -> dict[str, str]:
+    # TODO: Add input validation and more comprehensive error handling
     try:
         safe_input = html.escape(user_query.strip())
         response = requests.get(f"https://api.duckduckgo.com/?q={safe_input}&format=json")

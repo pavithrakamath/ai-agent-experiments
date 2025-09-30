@@ -96,6 +96,8 @@ def run_interactive_agent(query, max_turns=5) -> str:
 
 
 def calculate(what):
+    # TODO: Replace eval() with safer parsing for production use
+    # This is a simple implementation for learning purposes
     return eval(what)
 
 
