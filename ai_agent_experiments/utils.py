@@ -203,6 +203,11 @@ def image_openai_call(model_name: str, prompt: str, media_type: str, b64: str) -
         model=config.azure_open_ai_config["model"],
         messages=[
             {
+                "role": "system",
+                "content":"You are a careful assistant. Respond with a single valid JSON object only. "
+            "Do not include markdown, code fences, or commentary outside JSON."
+            },
+            {
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt},
