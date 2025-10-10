@@ -12,10 +12,10 @@ from ai_agent_experiments.mcp_stdio_client import McpStdioClient
 class ChatBot:
     def __init__(self, config: Configuration):
 
-        self.client = AsyncAzureOpenAI(api_key=config.client_config["api_key"],
-                                       azure_endpoint=config.client_config["azure_endpoint"],
-                                       api_version=config.client_config["api_version"])
-        self.model = config.client_config["model"]
+        self.client = AsyncAzureOpenAI(api_key=config.azure_open_ai_config["api_key"],
+                                       azure_endpoint=config.azure_open_ai_config["azure_endpoint"],
+                                       api_version=config.azure_open_ai_config["api_version"])
+        self.model = config.azure_open_ai_config["model"]
         self.system_message = "You are a helpful assistant. Your name is Bot. Be Polite in your answers. The way to exit any conversation with you is to type `exit`."
         self.messages: List[ChatCompletionMessageParam] = [
             ChatCompletionSystemMessageParam(content=self.system_message, role="system")]

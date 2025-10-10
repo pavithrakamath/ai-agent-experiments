@@ -9,9 +9,9 @@ from ai_agent_experiments.config import Configuration
 
 if __name__ == "__main__":
     config = Configuration("../config.json")
-    model = AzureAIChatCompletionsModel(model=config.client_config["model"],
-                                        credential=config.client_config["api_key"],
-                                        endpoint=config.client_config["inference_endpoint"],
+    model = AzureAIChatCompletionsModel(model=config.azure_open_ai_config["model"],
+                                        credential=config.azure_open_ai_config["api_key"],
+                                        endpoint=config.azure_open_ai_config["inference_endpoint"],
                                         )
     ada_info = """
     Adal Lambag is a fictional character from a fictional book named "The Lamb of Adal". Adal Lambag is a young woman who is a member of a family.

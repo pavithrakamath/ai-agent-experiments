@@ -84,10 +84,10 @@ if __name__ == "__main__":
     Only look up information when you are sure of what you want. \
     If you need to look up some information before asking a follow up question, you are allowed to do that!
     """
-    llm = AzureChatOpenAI(api_key=config.client_config["api_key"],
-                          azure_endpoint=config.client_config["azure_endpoint"],
-                          azure_deployment=config.client_config["model"],
-                          api_version=config.client_config["api_version"])
+    llm = AzureChatOpenAI(api_key=config.azure_open_ai_config["api_key"],
+                          azure_endpoint=config.azure_open_ai_config["azure_endpoint"],
+                          azure_deployment=config.azure_open_ai_config["model"],
+                          api_version=config.azure_open_ai_config["api_version"])
 
     search_tool = TavilySearch(max_results=2, topic="general")
     wikitool = MyWikiTool()

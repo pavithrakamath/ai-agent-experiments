@@ -21,10 +21,10 @@ def search(user_query: str) -> dict[str, str]:
 
 class ResearchAgent:
     def __init__(self, config:Configuration):
-        self.client = AzureOpenAI(api_key=config.client_config["api_key"],
-                                       azure_endpoint=config.client_config["azure_endpoint"],
-                                       api_version=config.client_config["api_version"])
-        self.model = config.client_config["model"]
+        self.client = AzureOpenAI(api_key=config.azure_open_ai_config["api_key"],
+                                  azure_endpoint=config.azure_open_ai_config["azure_endpoint"],
+                                  api_version=config.azure_open_ai_config["api_version"])
+        self.model = config.azure_open_ai_config["model"]
 
     def analyze(self, search_result, original_query) -> str:
         response = self.client.chat.completions.create(

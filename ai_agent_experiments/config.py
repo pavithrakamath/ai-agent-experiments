@@ -71,7 +71,7 @@ class Configuration:
     def __init__(self, path: str):
         load_dotenv()
         self._mcp_config = _load_config(path)
-        self.client_config = {
+        self.azure_open_ai_config = {
             "api_key":  str.strip(str(os.getenv("AZURE_OPENAI_API_KEY", ""))),
             "azure_endpoint": str.strip(str(os.getenv("AZURE_OPENAI_ENDPOINT", ""))),
             "api_version" : str.strip(str(os.getenv("AZURE_OPENAI_API_VERSION","" ))),
@@ -85,6 +85,9 @@ class Configuration:
             "chunk_size": os.getenv("FAISS_CHUNK_SIZE", 1000),
             "chunk_overlap": os.getenv("FAISS_CHUNK_OVERLAP", 100),
             "embedding_metric": os.getenv("FAISS_EMBEDDING_METRIC", "cosine"),
+        }
+        self.anthropic_config = {
+            "api_key": str.strip(str(os.getenv("ANTHROPIC_API_KEY", ""))),
         }
 
 

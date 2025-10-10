@@ -20,6 +20,12 @@ langchain = "^0.3.27"
 langchain-azure-ai = "^0.1.5"
 langgraph = "^0.6.8"
 langchain-tavily = "^0.2.11"
+matplotlib = "^3.10.7"
+anthropic = "^0.69.0"
+pandas = "^2.3.3"
+ipython = "^9.6.0"
+notebook = "^7.4.7"
+jupyter-cache = "^1.0.1"
 
 
 [build-system]

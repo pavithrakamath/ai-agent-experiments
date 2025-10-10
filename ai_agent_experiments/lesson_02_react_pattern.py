@@ -7,10 +7,10 @@ from ai_agent_experiments.config import Configuration
 
 class ReaActAgent:
     def __init__(self, config: Configuration):
-        self.client = AzureOpenAI(api_key=config.client_config["api_key"],
-                                  azure_endpoint=config.client_config["azure_endpoint"],
-                                  api_version=config.client_config["api_version"])
-        self.model = config.client_config["model"]
+        self.client = AzureOpenAI(api_key=config.azure_open_ai_config["api_key"],
+                                  azure_endpoint=config.azure_open_ai_config["azure_endpoint"],
+                                  api_version=config.azure_open_ai_config["api_version"])
+        self.model = config.azure_open_ai_config["model"]
         self.system_message = """
 You run in a loop of Thought, Action, PAUSE, Observation.
 At the end of the loop you output an Answer
